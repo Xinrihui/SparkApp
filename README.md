@@ -5,11 +5,15 @@
 
 ## 1.SparkApp by PySpark
 
-### 1.1 sparkcore
+### 1.1 api
+
+/api 中测试了不同的算子 并 实现了单词计数
+
+### 1.2 sparkcore
 
 /sparkcore 中实现了RDD的 join 和自定义累加器
 
-### 1.2 ecommerce
+### 1.3 ecommerce
 
 /ecommerce 中实现了电商平台的分析案例
 

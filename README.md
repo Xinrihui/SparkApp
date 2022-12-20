@@ -7,27 +7,19 @@
 
 ### 1.1 api
 
-/api 中测试了不同的算子 并 实现了单词计数
+/api 中测试了不同的RDD算子 和 DataFrame 的操作 
 
 ### 1.2 sparkcore
 
 /sparkcore 中实现了RDD的 join 和自定义累加器
 
-### 1.3 ecommerce
+### 1.3 Application: 单词计数
 
-/ecommerce 中实现了电商平台的分析案例
+/wordcount 中使用了不同方法实现了单词计数, 包括高效的累加器
 
-数据集：电商网站的用户行为数据
+### 1.4 Application: 电商平台的用户行为分析
 
-主要包含用户的 4 种行为： 搜索，点击，下单，支付。
-数据规则如下：
-
-* 数据文件中每行数据采用下划线(_)分隔数据
-* 每一行数据表示用户的一次行为，这个行为只能是 4 种行为的一种
-* 如果搜索关键字为 null,表示数据不是搜索数据
-* 如果点击的品类 ID 和产品 ID 为-1，表示数据不是点击数据
-* 针对于下单行为，一次可以下单多个商品，所以品类 ID 和产品 ID 可以是多个， id 之间采用逗号分隔，如果本次不是下单行为，则数据采用 null 表示
-* 支付行为和下单行为类似
+/ecommerce 中实现了电商平台的用户行为分析案例
 
 数据集 [user_visit_action.txt](data/user_visit_action.txt) 的 schema 如下表
 
@@ -48,8 +40,18 @@
 | 12|  city_id|  Long|  城市 id| 
 
 
+主要包含用户的 4 种行为： 搜索，点击，下单，支付。
+数据规则如下：
 
-#### 1.2.1 Top10 热门品类
+* 数据文件中每行数据采用下划线(_)分隔数据
+* 每一行数据表示用户的一次行为，这个行为只能是 4 种行为的一种
+* 如果搜索关键字为 null,表示数据不是搜索数据
+* 如果点击的品类 ID 和产品 ID 为-1，表示数据不是点击数据
+* 针对于下单行为，一次可以下单多个商品，所以品类 ID 和产品 ID 可以是多个， id 之间采用逗号分隔，如果本次不是下单行为，则数据采用 null 表示
+* 支付行为和下单行为类似
+
+
+####  Top10 热门品类
 
 代码位置: [ecommerce/HotCategoryTop10Analysis](ecommerce/HotCategoryTop10Analysis.py)
 
@@ -58,13 +60,13 @@
 先按照点击数排名，靠前的就排名高；如果点击数相同，再比较下
 单数；下单数再相同，就比较支付数。
 
-#### 1.2.2 Top10 热门品类中每个品类的 Top10 活跃 Session 统计
+####  Top10 热门品类中每个品类的 Top10 活跃 Session 统计
 
 代码位置: [ecommerce/HotCategoryTop10SessionAnalysis](ecommerce/HotCategoryTop10SessionAnalysis.py)
 
-在需求一的基础上，增加每个品类用户 session 的点击统计
+在Top10 热门品类的基础上，增加每个品类的用户 session 的点击统计
 
-#### 1.2.3 页面单跳转换率统计
+####  页面单跳转换率统计
 
 代码位置: [ecommerce/PageflowAnalysis](ecommerce/PageflowAnalysis.py)
 
@@ -76,15 +78,99 @@
 为 A，然后获取符合条件的 Session 中访问了页面 3 又紧接着访问了页面 5 的次数为 B，
 那么 B/A 就是 3-5 的页面单跳转化率。
 
+### 1.5 Application: 电商平台商品销售分析
+
+/ecommerce2 中实现了电商平台的商品销售分析案例
+
+数据集 [product_click_dataset](data/product_click_dataset) 中有 3 张表： 
+
+**城市表**
+
+| 编号 | 字段名称 | 字段类型 |字段含义  |
+| ---- | ----   | ---- |----  |
+| 0 | city_id | bigint |  |
+| 1 | city_name | string |  |
+| 2 | area | string |  |
+
+```
+CREATE TABLE `city_info`(
+`city_id` bigint,
+`city_name` string,
+`area` string)
+row format delimited fields terminated by '\t';
+
+```
+
+**产品表**
+
+| 编号 | 字段名称 | 字段类型 |字段含义  |
+| ---- | ----   | ---- |----  |
+| 0 | product_id | bigint |  |
+| 1 | product_name | string |  |
+| 2 | extend_info | string |  |
+
+```
+CREATE TABLE `product_info`(
+`product_id` bigint,
+`product_name` string,
+`extend_info` string)
+row format delimited fields terminated by '\t';
+
+```
+
+**用户行为表**
+
+|  编号   | 字段名称  | 字段类型  |字段含义  |
+|  ----  | ----  | ----  |----  |
+| 0 | date | String | 用户点击行为的日期 |
+| 1 | user_id | Long | 用户的 ID| 
+| 2 | session_id | String | Session 的 ID| 
+| 3 | page_id | Long | 某个页面的 ID| 
+| 4 | action_time|  String|  动作的时间点| 
+| 5 | search_keyword|  String|  用户搜索的关键词| 
+| 6 | click_category_id | Long|  某一个商品品类的 ID| 
+| 7 | click_product_id|  Long | 某一个商品的 ID| 
+| 8 | order_category_ids|  String|  一次订单中所有品类的 ID 集合| 
+| 9 |  order_product_ids|  String|  一次订单中所有商品的 ID 集合| 
+| 10|  pay_category_ids|  String|  一次支付中所有品类的 ID 集合| 
+| 11| pay_product_ids|  String|  一次支付中所有商品的 ID 集合| 
+| 12|  city_id|  Long|  城市 id| 
+
+```
+CREATE TABLE `user_visit_action`(
+`date` string,
+`user_id` bigint,
+`session_id` string,
+`page_id` bigint,
+`action_time` string,
+`search_keyword` string,
+`click_category_id` bigint,
+`click_product_id` bigint,
+`order_category_ids` string,
+`order_product_ids` string,
+`pay_category_ids` string,
+`pay_product_ids` string,
+`city_id` bigint)
+row format delimited fields terminated by '\t';
+
+```
+
+统计各区域热门商品 Top3：热门商品是从点击量的维度来看的，计算各个区域前三大热门商品，并备注上每
+个商品在主要城市中的分布比例，超过两个城市用'其他'显示。
+
+~~~~
+
+
+
 ## 2.Notes
 
 1. 使用 PySpark 要注意 Spark 和 python 的版本兼容问题
 
 本项目测试环境为:
 
-java | scala | spark | python | 
------| ------|-------| ------| 
-1.8| 2.11 | 2.4  | 3.7 |  
+java | scala | spark | python | pyarrow | numpy | pandas |     
+-----| ------|-------| ------| ------|------| ------|
+1.8  | 2.11  | 2.4   | 3.7 |  0.14.0 | 1.19.0|  1.3.5 |
 
 
 

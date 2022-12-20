@@ -312,7 +312,7 @@ class HotCategoryAccumulator(AccumulatorParam):
     def addInPlace(self, dict1, dict2):
         # dict1: 上一个 dict
 
-        first_k_v = list(dict2.items())[0]
+        first_k_v = next(iter(dict2.items()))
         first_v = first_k_v[1]
 
         # 通过 value 的类型, 判断现在在哪个阶段(map , merge)

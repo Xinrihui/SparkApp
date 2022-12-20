@@ -155,10 +155,9 @@ row format delimited fields terminated by '\t';
 
 ```
 
-统计各区域热门商品 Top3：热门商品是从点击量的维度来看的，计算各个区域前三大热门商品，并备注上每
-个商品在主要城市中的分布比例，超过两个城市用'其他'显示。
+统计各区域热门商品 Top3：热门商品是从点击量的维度来看的，计算各个区域前三大热门商品，并备注上每个商品在主要城市中的分布比例，超过两个城市用'其他'显示。
 
-
+代码位置: [ecommerce2/HotProduct](ecommerce2/HotProduct.py)
 
 ## 2.Notes
 

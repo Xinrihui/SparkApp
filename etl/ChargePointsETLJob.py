@@ -1,11 +1,8 @@
-from pyspark.sql import SparkSession
-
 
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
 from pyspark.sql import SparkSession
 
-from collections import Counter
 
 # API doc
 # https://spark.apache.org/docs/latest/api/python/reference/index.html
